@@ -89,7 +89,7 @@ async def _async_publish_to_pure_topics(
             tasks = []
             for key, value in data.items():
                 tasks.append(
-                    client.publish(f"{topic}/{_generate_payload(key)}", _generate_payload(value))
+                    client.publish(f"{topic}/{key}", _generate_payload(value))
                 )
             await asyncio.gather(*tasks)
     except MqttError as err:
