@@ -110,6 +110,7 @@ optional arguments:
                         The input unit system used by the device (default: imperial)
   --output-unit-system OUTPUT_UNIT_SYSTEM
                         The unit system to use in output (default: imperial)
+  --pure-topics         Publish every data on its own topic with just its value
 ```
 ## Unit Systems
 

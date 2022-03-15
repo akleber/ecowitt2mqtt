@@ -78,6 +78,27 @@ async def _async_publish_to_topic(
     LOGGER.info("Published to %s: %s", topic, data)
 
 
+async def _async_publish_to_pure_topics(
+    client: Client, data: Dict[str, Any], topic: str
+) -> None:
+    """Publish data to a individual MQTT topics."""
+    LOGGER.debug("Publishing entire device payload to individual topics wit prefix: %s", topic)
+
+    try:
+        async with client:
+            tasks = []
+            for key, value in data.items():
+                tasks.append(
+                    client.publish(f"{topic}/{_generate_payload(key)}", _generate_payload(value))
+                )
+            await asyncio.gather(*tasks)
+    except MqttError as err:
+        LOGGER.error("Error while publishing to %s: %s", topic, err)
+        return
+
+    LOGGER.info("Published to %s: %s", topic, data)
+
+
 async def async_publish_payload(request: web.Request) -> None:
     """Define the endpoint for the Ecowitt device to post data to."""
     args = request.app["args"]
@@ -113,4 +134,7 @@ async def async_publish_payload(request: web.Request) -> None:
         else:
             topic = f"ecowitt2mqtt/{data_processor.device.unique_id}"
 
-        await _async_publish_to_topic(client, data, topic)
+        if args.pure_topics:
+            await _async_publish_to_pure_topics(client, data, topic)
+        else:
+            await _async_publish_to_topic(client, data, topic)

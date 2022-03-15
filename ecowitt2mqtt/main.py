@@ -120,7 +120,12 @@ def get_arguments() -> argparse.Namespace:
         type=str,
         help=f"The unit system to use in output (default: {UNIT_SYSTEM_IMPERIAL})",
     )
-
+    parser.add_argument(
+        "--pure-topics",
+        action="store_const",
+        const=True,
+        help="Publish every data on its own topic with just its value",
+    )
     return parser.parse_args()
 
 
